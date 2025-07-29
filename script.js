@@ -1,89 +1,58 @@
 'use strict';
 const result=document.querySelector('#result');
 const copyBtn=document.querySelector('.btn-copy');
-
 const passwordLength=document.querySelector('#characeterLenght');
 const lowercaseCharacter=document.querySelector('#lowercaseCharacter');
 const uppercaseCharacter=document.querySelector('#uppercaseCharacter');
 const numbercharacters=document.querySelector('#numbercharacters');
 const symbolcharacters=document.querySelector('#symbolcharacters');
-const susccesMessageEl=document.querySelector('.suscces-message');
+const susccesMessageEl=document.querySelector('#suscces-message');
 const GenerateBtn=document.querySelector('.btn-generate');
 
-console.log(result, passwordLength, lowercaseCharacter,
-    uppercaseCharacter, numbercharacters, symbolcharacters, GenerateBtn);
-const getRandomCharacter=(num1, num2=97) => String
-    .fromCharCode(Math.floor(Math.random()*num1)+num2);
-
-const getLowercharacter=() => getRandomCharacter(26, 97);
-
-const getUppercharacter=() => getRandomCharacter(26, 97).toUpperCase();
-
-const getNumbercharacter=() => {
-    const numberRandom='1234567890';
-    return numberRandom[Math.floor(Math.random()*numberRandom.length)];
-};
-
-
-const getSymbelcharacter=() => {
-    const symbel='!@#$%^&*()_+-";-></?';
-    return symbel[Math.floor(Math.random()*symbel.length)];
-}
-console.log(getLowercharacter(), getUppercharacter()
-    , getNumbercharacter(), getSymbelcharacter());
-
-    const getRandomcharacter={
-        lowercase: getLowercharacter(),
-        uppercase: getUppercharacter(),
-        number: getNumbercharacter(),
-        symbel: getSymbelcharacter()
+const getRandomCharacter=(characters) => characters[Math.floor(Math.random()*characters.length)];
+const getLowercharacter=() => getRandomCharacter('qwertyuioplkjhgfdsazxcvbnm');
+const getUppercharacter=() => getLowercharacter().toUpperCase();
+const getNumbercharacter=() => getRandomCharacter('1234567890');
+const getSymbelcharacter=() => getRandomCharacter('!@#$%^&*()_+-";-></?');
+const generateRandomPassword=function (
+    length=5,
+    lower=true,
+    upper=true,
+    number=true,
+    symbel=true,
+) {
+    if (length>20) {
+        alert('Your number of password is big');
+    } else {
+        const arr=[];
+        for (let i=0; i<length; i++) {
+            const pass=[
+                lower? getLowercharacter():'',
+                upper? getUppercharacter():'',
+                number? getNumbercharacter():'',
+                symbel? getSymbelcharacter():''
+            ];
+            arr.push(pass.filter(res => res));
+        }
+        return arr.join('').replaceAll(',', '').slice(0, length);
     }
-
-    const generatepassword=(
-    length,
-    uppercase,
-    number,
-    symbel,
-    lowercase
-) => {
-    let generatePassword='';
-    const checkCound=uppercase+symbel+number+lowercase;
-
-    const check=[{ length },{lowercase}, { uppercase }, { number }, { symbel }].filter(item => Object.values(item)[0]);
-    console.log(check);
-
-    if (checkCound===0) {
-        return '';
-    }
-    for (let i=0; i<length; i+=checkCound) {
-        check.forEach(check => {
-            const randomCharacterfunction=Object.keys(check)[0];
-            generatePassword+=getRandomcharacter[randomCharacterfunction];
-        });
-
-    }
-    result.value=generatePassword;
-    console.log(generatePassword);
-
 }
 
-
-
-GenerateBtn.addEventListener('click', () => {
-    const length=+passwordLength.value;
-    const lowercase=lowercaseCharacter.checked;
-    const uppercase=uppercaseCharacter.checked;
-    const symbol=symbolcharacters.checked;
-    const number=numbercharacters.checked;
-    generatepassword(length, uppercase, symbol, number);
+GenerateBtn.addEventListener('click', function () {
+    result.value=generateRandomPassword(
+        passwordLength.value,
+        lowercaseCharacter.checked,
+        uppercaseCharacter.checked,
+        numbercharacters.checked,
+        symbolcharacters.checked);
 });
-const copypassword=() => {
+const copyValue=function () {
     result.select();
     document.execCommand('copy');
-    susccesMessageEl.style.opacity='1';
+    result.value='';
+    susccesMessageEl.style.opacity=1;
     setTimeout(() => {
-        susccesMessageEl.style.opacity='0';
-    }, 1000);
+        susccesMessageEl.style.opacity=0;
+    }, 3000);
 }
-
-copyBtn.addEventListener('click', copypassword);
+copyBtn.addEventListener('click', copyValue);
